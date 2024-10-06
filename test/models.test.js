@@ -1,4 +1,4 @@
-const { Ship } = require('../src/models.mjs');
+const { Ship, Gameboard } = require('../src/models.mjs');
 
 describe('Ship', () => {
   const ship2 = new Ship(2);
@@ -25,5 +25,344 @@ describe('Ship', () => {
   test('no more hits after sunk', () => {
     ship2.hit();
     expect(ship2.hits).toBe(2);
+  });
+});
+
+describe('Gameboard', () => {
+  const transformBoardForTest = (gameboard) => gameboard.board.map((row) => row.map((cell) => cell.display));
+
+  test('empty board', () => {
+    const testGameboard = new Gameboard();
+
+    expect(transformBoardForTest(testGameboard)).toEqual([
+      ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+    ]);
+  });
+
+  describe('Add board func', () => {
+    describe('positive add', () => {
+      test('add to center', () => {
+        const testGameboard = new Gameboard();
+
+        expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+        expect(transformBoardForTest(testGameboard)).toEqual([
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ]);
+      });
+
+      test('add to first cell', () => {
+        const testGameboard = new Gameboard();
+
+        expect(testGameboard.addShip(0, 0, new Ship(1))).toBeTruthy();
+        expect(transformBoardForTest(testGameboard)).toEqual([
+          ['S', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ]);
+
+        expect(testGameboard.addShip(3, 0, new Ship(4))).toBeTruthy();
+        expect(transformBoardForTest(testGameboard)).toEqual([
+          ['S', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['S', 'S', 'S', 'S', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ]);
+
+        expect(testGameboard.addShip(9, 0, new Ship(1))).toBeTruthy();
+        expect(transformBoardForTest(testGameboard)).toEqual([
+          ['S', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['S', 'S', 'S', 'S', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['S', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ]);
+      });
+
+      test('add to last cell', () => {
+        const testGameboard = new Gameboard();
+
+        expect(testGameboard.addShip(9, 8, new Ship(2)));
+        expect(transformBoardForTest(testGameboard)).toEqual([
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'S', 'S'],
+        ]);
+
+        expect(testGameboard.addShip(0, 9, new Ship(1))).toBeTruthy();
+
+        expect(transformBoardForTest(testGameboard)).toEqual([
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'S'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'S', 'S'],
+        ]);
+      });
+    });
+
+    test('out of range', () => {
+      const testGameboard = new Gameboard();
+
+      expect(testGameboard.addShip(-1, 4, new Ship(4))).toBeFalsy();
+      expect(testGameboard.addShip(11, 4, new Ship(4))).toBeFalsy();
+      expect(testGameboard.addShip(4, -1, new Ship(4))).toBeFalsy();
+      expect(testGameboard.addShip(4, 11, new Ship(4))).toBeFalsy();
+      expect(transformBoardForTest(testGameboard)).toEqual([
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ]);
+    });
+
+    test('check free cell', () => {
+      const testGameboard = new Gameboard();
+
+      expect(testGameboard.addShip(0, 0, new Ship(2))).toBeTruthy();
+      expect(testGameboard.addShip(0, 0, new Ship(2))).toBeFalsy();
+      expect(testGameboard.addShip(0, 1, new Ship(2))).toBeFalsy();
+
+      expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+      expect(testGameboard.addShip(4, 2, new Ship(3))).toBeFalsy();
+
+      expect(transformBoardForTest(testGameboard)).toEqual([
+        ['S', 'S', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+      ]);
+    });
+
+    describe('check free neighboring cell', () => {
+      test('positive add with neighbors', () => {
+        const testGameboard = new Gameboard();
+        expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+        expect(testGameboard.addShip(4, 0, new Ship(3))).toBeTruthy();
+        expect(testGameboard.addShip(4, 9, new Ship(1))).toBeTruthy();
+        expect(testGameboard.addShip(2, 4, new Ship(4))).toBeTruthy();
+        expect(testGameboard.addShip(6, 4, new Ship(4))).toBeTruthy();
+        expect(transformBoardForTest(testGameboard)).toEqual([
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['S', 'S', 'S', 'O', 'S', 'S', 'S', 'S', 'O', 'S'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ]);
+      });
+
+      test('left neighbor', () => {
+        const testGameboard = new Gameboard();
+        expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+        expect(testGameboard.addShip(4, 8, new Ship(2))).toBeFalsy();
+
+        expect(transformBoardForTest(testGameboard)).toEqual([
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ]);
+      });
+
+      test('right neighbor', () => {
+        const testGameboard = new Gameboard();
+        expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+        expect(testGameboard.addShip(4, 2, new Ship(2))).toBeFalsy();
+        expect(transformBoardForTest(testGameboard)).toEqual([
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+        ]);
+      });
+
+      describe('upper neighbor', () => {
+        test('upper left neighbor', () => {
+          const testGameboard = new Gameboard();
+          expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+          expect(testGameboard.addShip(3, 3, new Ship(2))).toBeFalsy();
+          expect(transformBoardForTest(testGameboard)).toEqual([
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ]);
+        });
+
+        test('upper center neighbor', () => {
+          const testGameboard = new Gameboard();
+          expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+          expect(testGameboard.addShip(3, 4, new Ship(2))).toBeFalsy();
+          expect(transformBoardForTest(testGameboard)).toEqual([
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ]);
+        });
+
+        test('upper right neighbor', () => {
+          const testGameboard = new Gameboard();
+          expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+          expect(testGameboard.addShip(3, 8, new Ship(2))).toBeFalsy();
+          expect(transformBoardForTest(testGameboard)).toEqual([
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ]);
+        });
+      });
+
+      describe('lower neighbor', () => {
+        test('lower left neighbor', () => {
+          const testGameboard = new Gameboard();
+          expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+          expect(testGameboard.addShip(5, 3, new Ship(2))).toBeFalsy();
+          expect(transformBoardForTest(testGameboard)).toEqual([
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ]);
+        });
+
+        test('lower center neighbor', () => {
+          const testGameboard = new Gameboard();
+          expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+          expect(testGameboard.addShip(5, 4, new Ship(2))).toBeFalsy();
+          expect(transformBoardForTest(testGameboard)).toEqual([
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ]);
+        });
+
+        test('lower right neighbor', () => {
+          const testGameboard = new Gameboard();
+          expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
+          expect(testGameboard.addShip(5, 8, new Ship(2))).toBeFalsy();
+          expect(transformBoardForTest(testGameboard)).toEqual([
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'S', 'S', 'S', 'S', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+            ['O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O', 'O'],
+          ]);
+        });
+      });
+    });
   });
 });
