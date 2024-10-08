@@ -48,7 +48,7 @@ describe('Gameboard', () => {
     ]);
   });
 
-  describe('Add board func', () => {
+  describe('addShip func', () => {
     describe('positive add', () => {
       test('add to center', () => {
         const testGameboard = new Gameboard();
@@ -451,7 +451,7 @@ describe('Gameboard', () => {
       ]);
     });
 
-    test('attack with zero living ships', () => {
+    test('attack with zero living ship', () => {
       const testGameboard = new Gameboard();
       expect(testGameboard.addShip(4, 4, new Ship(4))).toBeTruthy();
 
