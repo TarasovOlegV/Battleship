@@ -136,7 +136,7 @@ class Gameboard {
             // low right
             if (i !== 9) this.board[x + 1][i + 1].display = 'X';
             //low
-            this.board[x + 1][i].display !== 'X';
+            this.board[x + 1][i].display = 'X';
           }
         }
 
@@ -149,6 +149,13 @@ class Gameboard {
     } else {
       return false;
     }
+  }
+}
+
+class Player {
+  constructor(type, gameboard) {
+    this.type = type;
+    this.gameboard = gameboard;
   }
 }
 
