@@ -20,12 +20,11 @@ class Gameboard {
    O - free cell
    S - ship
    X - miss
-   SX -  hit the ship
+   H -  hit the ship
    */
   constructor() {
     this.board = this.#generateBoard();
     this.liveShip = 0;
-    this._shipIdCount = 1;
   }
 
   #generateBoard() {
@@ -85,13 +84,73 @@ class Gameboard {
 
     for (let i = 0; i < ship.size; i++) {
       this.board[x][y + i].display = 'S';
-      this.board[x][y + i].ship = { link: ship, id: this._shipIdCount };
+      this.board[x][y + i].ship = ship;
     }
 
-    this._shipIdCount += 1;
     this.liveShip += 1;
     return true;
   }
+
+  receiveAttack(x, y) {
+    // check border
+    if (x > 9 || y > 9 || x < 0 || y < 0) return false;
+    // zero living ships
+    if (this.liveShip <= 0) return false;
+
+    // miss
+    if (this.board[x][y].display === 'O') {
+      this.board[x][y].display = 'X';
+      return true;
+      // hit
+    } else if (this.board[x][y].display === 'S') {
+      this.board[x][y].display = 'H';
+      this.board[x][y].ship.hit();
+      // hit around if sunk
+      if (this.board[x][y].ship.isSunk()) {
+        //find start cell ship
+        let start;
+        for (let i = 0; i < 10; i++) {
+          if (this.board[x][i].ship === this.board[x][y].ship) {
+            start = i;
+            break;
+          }
+        }
+
+        const shipSize = this.board[x][y].ship.size;
+        for (let i = start; i < start + shipSize; i++) {
+          // hit top row
+          // skip for first row
+          if (x !== 0) {
+            //top left
+            if (i !== 0) this.board[x - 1][i - 1].display = 'X';
+            //top right
+            if (i !== 9) this.board[x - 1][i + 1].display = 'X';
+            //top
+            this.board[x - 1][i].display = 'X';
+          }
+          // hit low row
+          // skip for last row
+          if (x !== 9) {
+            //low left
+            if (i !== 0) this.board[x + 1][i - 1].display = 'X';
+            // low right
+            if (i !== 9) this.board[x + 1][i + 1].display = 'X';
+            //low
+            this.board[x + 1][i].display !== 'X';
+          }
+        }
+
+        // hit left-right
+        if (start !== 0) this.board[x][start - 1].display = 'X';
+        if (start + shipSize < 10) this.board[x][start + shipSize].display = 'X';
+        this.liveShip -= 1;
+      }
+      return true;
+    } else {
+      return false;
+    }
+  }
 }
 
+const board = new Gameboard();
 export { Ship, Gameboard };
