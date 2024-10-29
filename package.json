@@ -1,4 +1,5 @@
 {
+  "source": "src/index.html",
   "scripts": {
     "test": "jest"
   },

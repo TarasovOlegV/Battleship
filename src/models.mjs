@@ -243,4 +243,4 @@ class Player {
   }
 }
 
-export { Ship, Gameboard };
+export { Ship, Gameboard, Player };
