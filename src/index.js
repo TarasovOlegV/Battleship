@@ -1,23 +1,29 @@
 import { Gameboard, Player, Ship } from './models.mjs';
 
-let gameStarted = false;
 let gameFinish = false;
-
-const computerPlayer = new Player('computer', new Gameboard());
-computerPlayer.gameboard.addShip(0, 0, new Ship(4, 'horizontal'));
-computerPlayer.gameboard.addShip(4, 4, new Ship(2, 'vertical'));
-
-const humanPlayer = new Player('human', new Gameboard());
-humanPlayer.gameboard.addShip(2, 2, new Ship(2, 'vertical'));
-humanPlayer.gameboard.addShip(6, 6, new Ship(3, 'horizontal'));
-
-const player1 = humanPlayer;
-const player2 = computerPlayer;
-
-let currentPlayer = player1;
 
 function randomIntFromInterval(min, max) {
   return Math.floor(Math.random() * (max - min + 1) + min);
+}
+
+function generateDeskWithRandomShips(shipsArr) {
+  const board = new Gameboard();
+  shipsArr.sort((a, b) => a - b);
+  while (shipsArr.length > 0) {
+    const shipSize = shipsArr.at(-1);
+    const random = Math.random();
+    let orientation;
+    if (random > 0.5) {
+      orientation = 'horizontal';
+    } else {
+      orientation = 'vertical';
+    }
+    if (board.addShip(randomIntFromInterval(0, 9), randomIntFromInterval(0, 9), new Ship(shipSize, orientation))) {
+      shipsArr.pop();
+    }
+  }
+
+  return board;
 }
 
 function computerAttack() {
@@ -101,6 +107,114 @@ function createHtmlBoard(gameboard, isHide) {
   return container;
 }
 
+function renderBoard(board, node, hide) {
+  node.innerHTML = '';
+  node.appendChild(createHtmlBoard(board, hide));
+}
+
+// Arrangement of ships
+const firstBoard = new Gameboard();
+document.querySelector('.desk-for-ship').appendChild(createHtmlBoard(firstBoard));
+
+const checkbox = document.querySelector('#oriental-checkbox');
+checkbox.onchange = (event) => {
+  if (event.target.checked) {
+    verticalOrientation = true;
+    document.querySelectorAll('.ship-horizontal').forEach((el) => (el.className = 'ship-vertical'));
+  } else {
+    verticalOrientation = false;
+    document.querySelectorAll('.ship-vertical').forEach((el) => (el.className = 'ship-horizontal'));
+  }
+};
+
+let verticalOrientation = false;
+
+function generateShipForDrag(cell, orientation) {
+  const div = document.createElement('div');
+  div.draggable = true;
+  if (orientation === 'vertical') {
+    div.className = 'ship-vertical';
+  } else {
+    div.className = 'ship-horizontal';
+  }
+
+  for (let i = 0; i < cell; i++) {
+    const cell = document.createElement('div');
+    cell.className = 'cell';
+    cell.classList.add('ship');
+    div.appendChild(cell);
+  }
+
+  generateShipForDrag.shipId += 1;
+  div.id = `id${generateShipForDrag.shipId}-${cell}`;
+  return div;
+}
+
+generateShipForDrag.shipId = 0;
+
+// Generate ships
+
+let shipCount = 6;
+
+document.querySelector('.ship-container').appendChild(generateShipForDrag(4, 'horizontal'));
+document.querySelector('.ship-container').appendChild(generateShipForDrag(3, 'horizontal'));
+document.querySelector('.ship-container').appendChild(generateShipForDrag(3, 'horizontal'));
+document.querySelector('.ship-container').appendChild(generateShipForDrag(2, 'horizontal'));
+document.querySelector('.ship-container').appendChild(generateShipForDrag(2, 'horizontal'));
+document.querySelector('.ship-container').appendChild(generateShipForDrag(2, 'horizontal'));
+
+// Drag'n'Drop
+function dragstart_handler(ev) {
+  ev.dataTransfer.setData('text/plain', ev.target.id);
+}
+
+function dragover_handler(ev) {
+  ev.preventDefault();
+  const data = ev.dataTransfer.getData('text/plain');
+  const [, cell] = data.split('-');
+  let orientation;
+  if (verticalOrientation) {
+    orientation = 'vertical';
+  } else {
+    orientation = 'horizontal';
+  }
+  const row = Number(ev.target.dataset.row);
+  const col = Number(ev.target.dataset.col);
+
+  if (firstBoard.addShip(row, col, new Ship(Number(cell), orientation))) {
+    const root = document.querySelector('.desk-for-ship');
+    renderBoard(firstBoard, root, false);
+    addDragOverEvent();
+    document.querySelector(`#${data}`).remove();
+    shipCount -= 1;
+    if (shipCount === 0) {
+      startGame();
+    }
+  }
+}
+
+function addDragOverEvent() {
+  document.querySelectorAll('.desk-for-ship .cell').forEach((el) => {
+    el.addEventListener('dragover', (event) => event.preventDefault());
+    el.ondrop = dragover_handler;
+  });
+}
+
+function addOnDragStart() {
+  document.querySelectorAll('.ship-vertical').forEach((el) => (el.ondragstart = dragstart_handler));
+  document.querySelectorAll('.ship-horizontal').forEach((el) => (el.ondragstart = dragstart_handler));
+}
+
+addDragOverEvent();
+addOnDragStart();
+
+// Start game
+const humanPlayer = new Player('you', firstBoard);
+const computerPlayer = new Player('computer', generateDeskWithRandomShips([2, 2, 2, 4, 3, 3]));
+const player1 = humanPlayer;
+const player2 = computerPlayer;
+let currentPlayer = player1;
+
 function renderBoards() {
   document.querySelector('.first-player-desk').innerHTML = '';
   document.querySelector('.second-player-desk').innerHTML = '';
@@ -108,5 +222,8 @@ function renderBoards() {
   document.querySelector('.second-player-desk').appendChild(createHtmlBoard(computerPlayer.gameboard, true));
 }
 
-// first render
-renderBoards();
+function startGame() {
+  document.querySelector('.container').style.visibility = 'visible';
+  document.querySelector('.before-game').remove();
+  renderBoards();
+}
